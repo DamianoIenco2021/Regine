@@ -1,5 +1,6 @@
 package it.polito.tdp.regine.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Regine {
@@ -17,15 +18,62 @@ public class Regine {
 	//     [0, 2]
 	//            [0, 2, 1]
 	
-	private void cerca(List<Integer>parziale, int livello) {
+	private int N;
+	private List<Integer>soluzione;
+	
+	public List<Integer>risolvi(int N){
+		this.N=N;
+		List<Integer>parziale= new  ArrayList<Integer>();
+		
+		cerca(parziale,0);
+		
+		return this.soluzione;
+		
+	}
+	
+	
+	private boolean cerca(List<Integer>parziale, int livello) {
 		if(livello==N) {
 			// caso terminale
+			//System.out.println(parziale);
+			this.soluzione=new ArrayList<>(parziale);
+			return true;
 		} else {
 			for(int colonna=0; colonna<N; colonna++) {
 				// if la possa nella casella [livello][colonna] è valida
 				// se sì, aggiungi a parziale e fai ricorsione
+				
+				if(posValida(parziale,colonna)) {
+					parziale.add(colonna);
+					boolean trovato=cerca(parziale,livello+1);
+					if(trovato)
+						return true;
+					parziale.remove(parziale.size()-1); //backtracking
+				}
+			}
+			return false;
+		}
+	}
+
+
+	private boolean posValida(List<Integer> parziale, int colonna) {
+		int livello=parziale.size();
+		//controlla se viene mangiata in verticale
+		if(parziale.contains(colonna))
+		return false;
+		
+		//controlla se viene mangiata in diagonale: confronta la pos(livello,colonna) con (r,c)
+		//delle regine esistenti
+		
+		for(int r=0; r<livello; r++) {
+			int c=parziale.get(r);
+			
+			if(r+c == livello+ colonna || r-c == livello- colonna) {
+				return false;
 			}
 		}
+		
+		return true;
 	}
 	
 	
